@@ -1,0 +1,26 @@
+---
+title: "Getting Started"
+description: "First Steps into E155"
+author: "Corey Hickson"
+categories:
+  - Reflection
+date: "8/29/25"
+draft: false
+---
+
+## Week 1 Lectures
+This week we had the first 2 lectures for E155, covering course logistics and (System)Verilog syntax and idioms. I was especially exited
+to cover Verilog since I have become extremely familliar with the subtleties of the Language Reference Manual (LRM) over the past few 
+months (especially the verification specific constructs).
+
+## In the Lab
+While there were no technical deliverables for this week, I still spent a few hours in the lab soldering all components and connectors 
+to the PCB motherboard. I am not the most skilled at soldering, and I did not have previous experience with surface mounted soldering
+so this was a bit of a challenge. After much slouching, a considerable amount of solder wick, and a few backwards idodes, I have now
+finished this task and can move onto lab 1!
+
+## Goal Setting
+I am extremely excited to take this class, as I wanted to take it sooner but did not have the time in my schedule. My primary goal is to
+expand my scope as an electrical engineer beyone ASIC RTL and DV, and into the realm of embedded systems. My secondary goal is to have 
+fun with this class and enjoy my final year at Mudd. I really enjoyed E80 and the E85
+microprocessor based labs, so I know that I will enjoy this course now that I have the chance to take it. 

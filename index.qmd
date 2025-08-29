@@ -1,0 +1,23 @@
+---
+title: "E155 Portfolio"
+image: images/Headshot.jpg
+about:
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/corey-hickson/
+    - icon: github
+      text: Github
+      href: https://github.com/coreyqh
+---
+
+Corey Hickson is a class of 2026 Engineering Major at Harvey Mudd College with background in design
+verification and digital design. As a VLSI research fellow with the Clay-Wolkin Fellowship at
+Harvey Mudd, he has conducted core level functional testing and coverage collection of a RISC-V
+processor core. While interning at Skyworks Solutions in the summer of 2025, he conducted whole core
+level formal verification of a different RISC-V processor core. Corey looks forward to the 2025-26 
+HRL Laboratories engineering clinic project, where he and his team will work towards producing a C
+program to emulate a mixed analog-digital quantum qubit control board. After graduation, he will
+return to Skyworks as a Design Verification Engineer 1 to continue his work in formal verification from
+the past summer. 
