@@ -68,6 +68,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -152,7 +181,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#lab-1-fpga-and-mcu-setup-and-testing" id="toc-lab-1-fpga-and-mcu-setup-and-testing" class="nav-link active" data-scroll-target="#lab-1-fpga-and-mcu-setup-and-testing">Lab 1: FPGA and MCU Setup and Testing</a></li>
+  <li><a href="#lab-1-fpga-and-mcu-setup-and-testing" id="toc-lab-1-fpga-and-mcu-setup-and-testing" class="nav-link active" data-scroll-target="#lab-1-fpga-and-mcu-setup-and-testing">Lab 1: FPGA and MCU Setup and Testing</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#design-and-testing-methodology" id="toc-design-and-testing-methodology" class="nav-link" data-scroll-target="#design-and-testing-methodology">Design and Testing Methodology</a></li>
+  <li><a href="#technical-documentation" id="toc-technical-documentation" class="nav-link" data-scroll-target="#technical-documentation">Technical Documentation</a></li>
+  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion">Results and Discussion</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#ai-prototype" id="toc-ai-prototype" class="nav-link" data-scroll-target="#ai-prototype">AI Prototype</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -164,8 +201,142 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="lab-1-fpga-and-mcu-setup-and-testing" class="level2">
 <h2 class="anchored" data-anchor-id="lab-1-fpga-and-mcu-setup-and-testing">Lab 1: FPGA and MCU Setup and Testing</h2>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>This report outlines the design and verification of a simple FPGA design to become familiar with the E155 toolflow. The design contains a seven segment display decoder, a simple digital oscillator, and a few logic gates.</p>
+</section>
+<section id="design-and-testing-methodology" class="level3">
+<h3 class="anchored" data-anchor-id="design-and-testing-methodology">Design and Testing Methodology</h3>
+<p>The core part of the design is a 4 to 7 bit decoder for controlling a 7 segment display to display the hex value of a 4 bit input signal. This was created using behavioral SystemVerilog code and was verfified with a simple testbench, where the input signal was incremented from 0000 to 1111 and values for each bit of the decoded output was checked against the expected stream of bits. In hindsight, this was likely a convoluted approach to verification, but since the module is just a truth table, using standard test vectors would essentially mean copying the RTL code to see if it matched itself.</p>
+<p>For the top level module, the seven segment decoder was instantiated alongside a high speed oscillator (HSOSC) to generate a 48 MHz clock. This clock was fed into a digital clock divider where a constant P is added to a 32 bit register on each rising edge of the fast clock, causing the most significant bit to toggle with a frequency given by the following equation:</p>
+<p><span class="math display">\[
+f = \frac{P \cdot F}{2^n}
+\]</span></p>
+<p>Filling in n = 32 bits, F = 48 MHz, and f = 2.4 Hz, we can solve for P = 215 to achieve the desired frequency.</p>
+</section>
+<section id="technical-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="technical-documentation">Technical Documentation</h3>
+<p>The SystemVerilog source code for this lab can by found on my <a href="https://www.github.com/coreyqh/hmc-e155-lab1">github page</a></p>
+<section id="block-diagram" class="level4">
+<h4 class="anchored" data-anchor-id="block-diagram">Block diagram</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/block_diagram.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: Top level block diagram</figcaption>
+</figure>
+</div>
+<p>The block diagram in Figure 1 demonstrates the design structure, with the 7:4 decoder, two logic gates, high frequency clock, and clock divider</p>
+</section>
+<section id="schematic" class="level4">
+<h4 class="anchored" data-anchor-id="schematic">Schematic</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/schematic.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 2: schematic of physical breadboard circuit</figcaption>
+</figure>
+</div>
+<p>The schematic in Figure 2 demonstrates the phsyical hardware layout of the design, with the seven LEDs of the seven segment display with current limiting resistors, the three on-board LEDs driven by the design, and the input DIP switches.</p>
+</section>
+<section id="component-values" class="level4">
+<h4 class="anchored" data-anchor-id="component-values">Component Values</h4>
+<p>From the <a href="https://docs.broadcom.com/doc/AV02-1363EN">data sheet</a> the LED display has a voltage drop of roughly 2 volts. Since we are using a 3.3 Volt supply and the FPGA pins have an 8 mA current limit, we can set up the following equation for the minimum current limiting resistor value:</p>
+<p><span class="math display">\[
+R = \frac{3.3V - 2V}{8mA} = 165 \Omega
+\]</span></p>
+<p>However, to be extra careful not to burn out my LED display, I used a factor of safety of 2 and used 330 Ohm resistors.</p>
+</section>
+</section>
+<section id="results-and-discussion" class="level3">
+<h3 class="anchored" data-anchor-id="results-and-discussion">Results and Discussion</h3>
+<section id="testbench-simulation" class="level4">
+<h4 class="anchored" data-anchor-id="testbench-simulation">Testbench Simulation</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/seven_seg_wave.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 3: Testbench simulation waveforms from decoder module</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/seven_seg_term.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 4: Successful testbench output from seven segment decoder simulation</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/top_wave.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 5: Testbench Simulation of top level module</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/top_term.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 6: Successful testbench output from top level simulation</figcaption>
+</figure>
+</div>
+<p>The design was shown to meet all specifications in simulation, except the blinking LED which was tested in hardware.</p>
+</section>
+<section id="hardware-testing" class="level4">
+<h4 class="anchored" data-anchor-id="hardware-testing">Hardware testing</h4>
+<p>The seven segment display and two gate-driven LEDs responded to input DIP switches in accordance with the design spec</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/scope_pic.jpeg" class="img-fluid figure-img"></p>
+<figcaption>Figure 7: Photograph of oscilliscope measuring ~2.4Hz LED blinking</figcaption>
+</figure>
+</div>
+<p>Figure 7 shows the corrent timing of the blinking LED in hardware.</p>
+</section>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>I was able to set up the E155 toolchain and demonstrate it on this moderately simple lab. I look forward to building experience with this flow on future labs. I spent roughly 15 hours on this lab.</p>
+</section>
+<section id="ai-prototype" class="level3">
+<h3 class="anchored" data-anchor-id="ai-prototype">AI Prototype</h3>
+<p>I gave Microsoft Bing the following prompt to see if it could replicate some of my work:</p>
+<p>“Write SystemVerilog HDL to leverage the internal high speed oscillator in the Lattice UP5K FPGA and blink an LED at 2 Hz. Take full advantage of SystemVerilog syntax, for example, using logic instead of wire and reg.”</p>
+<p>Initally, it gave me the following code:</p>
+<pre><code>module led_blinker_2hz (
+    output logic led
+);
+
+    // Internal oscillator output
+    logic clk;
+    logic clk_en;
+
+    // Instantiate the high-frequency oscillator (typically 48 MHz)
+    SB_HFOSC #(
+        .CLKHF_DIV("0b00")  // No division: 48 MHz
+    ) hf_osc_inst (
+        .CLKHFEN(clk_en),
+        .CLKHFPU(clk_en),
+        .CLKHF(clk)
+    );
+
+    // Enable the oscillator
+    initial clk_en = 1'b1;
+
+    // Counter to divide 48 MHz down to 2 Hz
+    // 48,000,000 / 2 = 24,000,000 clock cycles per toggle
+    localparam int COUNT_MAX = 24_000_000;
+    logic [$clog2(COUNT_MAX)-1:0] counter = 0;
+
+    always_ff @(posedge clk) begin
+        if (counter == COUNT_MAX - 1) begin
+            counter &lt;= 0;
+            led &lt;= ~led;
+        end else begin
+            counter &lt;= counter + 1;
+        end
+    end
+
+endmodule</code></pre>
+<p>This did not synthesize since it used a different clock generator module, SB_HFOSC. When I asked it to correct the error, it insisted that it was related to a missing package. However, once I changed this module to HSOSC, it synthesized just fine.</p>
+<p>This prototype made me question the landscape of digital design. It seems that these models have gotten very good at the big picture, and only now struggle with the software specific details.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
