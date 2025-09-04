@@ -1,1 +1,81 @@
 ## Lab 1: FPGA and MCU Setup and Testing
+
+### Introduction
+This report outlines the design and verification of a simple FPGA design to become familiar with the E155 toolflow.
+The design contains a seven segment display decoder, a simple digital oscillator, and a few logic gates. 
+
+### Design and Testing Methodology
+The core part of the design is a 4 to 7 bit decoder for controlling a 7 segment display to display the hex value
+of a 4 bit input signal. This was created using behavioral SystemVerilog code and was verfified with a simple
+testbench, where the input signal was incremented from 0000 to 1111 and values for each bit of 
+the decoded output was checked against the expected stream of bits. In hindsight, this was likely a convoluted 
+approach to verification, but since the module is just a truth table, using standard test vectors would essentially
+mean copying the RTL code to see if it matched itself. 
+
+For the top level module, the seven segment decoder was instantiated alongside a high speed oscillator (HSOSC) to 
+generate a 48 MHz clock. This clock was fed into a digital clock divider where a constant P is added to a 32 bit
+register on each rising edge of the fast clock, causing the most significant bit to toggle with a frequency 
+given by the following equation:
+
+$$
+f = \frac{P \cdot F}{2^n} 
+$$
+
+Filling in n = 32 bits, F = 48 MHz, and f = 2.4 Hz, we can solve for P = 215 to achieve the desired frequency. 
+
+### Technical Documentation
+
+The SystemVerilog source code for this lab can by found on my [github page](https://www.github.com/coreyqh/hmc-e155-lab1)
+
+#### Block diagram
+
+![Figure 1: Top level block diagram](images/blockdiagram.jpg)
+
+The block diagram in Figure 1 demonstrates the design structure, with the 7:4 decoder, two logic gates, high
+frequency clock, and clock divider
+
+#### Schematic
+
+![Figure 2: schematic of physical breadboard circuit](images/schematic.jpg)
+
+The schematic in Figure 2 demonstrates the phsyical hardware layout of the design, with the seven LEDs of the 
+seven segment display with current limiting resistors, the three on-board LEDs driven by the design, and the 
+input DIP switches. 
+
+#### Component Values
+From the [data sheet](https://docs.broadcom.com/doc/AV02-1363EN) the LED display has a voltage drop of roughly 2
+volts. Since we are using a 3.3 Volt supply and red LEDs have a roughly 20 mA current limit, we can set up the
+following equation for the minimum current limiting resistor value:
+
+$$
+R = \frac{3.3V - 2V}{0.2mA} = 65 \Omega
+$$
+
+However, to be extra careful not to burn out my LED display, I used a factor of safety of a bit more than 3 and
+used 200 Ohm resistors. 
+
+### Results and Discussion
+
+#### Testbench Simulation
+![Figure 3: Testbench simulation waveforms from decoder module](images/seven_seg_wave.png)
+
+![Figure 4: Successful testbench output from seven segment decoder simulation](images/seven_seg_term.png)
+
+![Figure 5: Testbench Simulation of top level module](images/top_wave.png)
+
+![Figure 6: Successful testbench output from top level simulation](images/top_term.png)
+
+The design was shown to meet all specifications in simulation, except the blinking LED which was tested in hardware.
+
+#### Hardware testing
+
+The seven segment display and two gate-driven LEDs responded to input DIP switches in accordance with the design spec
+
+![Figure 7: Photograph of oscilliscope measuring ~2.4Hz LED blinking](images/scope_pic.jpeg)
+
+Figure 7 shows the corrent timing of the blinking LED in hardware.
+
+### Conclusion
+
+I was able to set up the E155 toolchain and demonstrate it on this moderately simple lab. I look forward to 
+building experience with this flow on future labs. 
