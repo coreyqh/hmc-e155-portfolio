@@ -44,15 +44,15 @@ input DIP switches.
 
 #### Component Values
 From the [data sheet](https://docs.broadcom.com/doc/AV02-1363EN) the LED display has a voltage drop of roughly 2
-volts. Since we are using a 3.3 Volt supply and red LEDs have a roughly 20 mA current limit, we can set up the
+volts. Since we are using a 3.3 Volt supply and the FPGA pins have an 8 mA current limit, we can set up the
 following equation for the minimum current limiting resistor value:
 
 $$
-R = \frac{3.3V - 2V}{0.2mA} = 65 \Omega
+R = \frac{3.3V - 2V}{8mA} = 165 \Omega
 $$
 
-However, to be extra careful not to burn out my LED display, I used a factor of safety of a bit more than 3 and
-used 200 Ohm resistors. 
+However, to be extra careful not to burn out my LED display, I used a factor of safety of 2 and
+used 330 Ohm resistors. 
 
 ### Results and Discussion
 
