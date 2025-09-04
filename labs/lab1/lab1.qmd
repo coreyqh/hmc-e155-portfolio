@@ -78,4 +78,4 @@ Figure 7 shows the corrent timing of the blinking LED in hardware.
 ### Conclusion
 
 I was able to set up the E155 toolchain and demonstrate it on this moderately simple lab. I look forward to 
-building experience with this flow on future labs. 
+building experience with this flow on future labs. I spent roughly 15 hours on this lab. 
