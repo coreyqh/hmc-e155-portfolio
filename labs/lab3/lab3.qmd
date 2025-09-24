@@ -1,1 +1,102 @@
 ## Lab 3: Keypad Scanner
+
+### Introduction
+This report outlines the design and verification process for a 4x4 keypad matrix with TDM 7-segment display outputs
+
+### Design and Verification methodology
+To make block level verification as simple as possible, I factored the design into three FSMs that each handle a
+small set of tasks, with handshakes between them where necessary. 
+
+I did block formal verification for this project using [SymbiYosys](https://symbiyosys.readthedocs.io/en/latest/). 
+With this tool, I proved that a set of design assertions were impossible to break for each major design element. 
+For system level verification, I produces a simple simulation testbench to demonstrate the glue logic between the
+formally verified blocks. 
+
+### Technical Documentation
+
+The SystemVerilog source code for this lab can by found on my [github page](https://www.github.com/coreyqh/hmc-e155-lab3)
+
+#### Block Diagram
+
+![Figure 1: Top level block diagram](images/block_diagram.png)
+
+The block diagram in Figure 1 demonstrates the design structure with the three major FSMs, an encoder to convert 
+row and column indecis into a hex value, and the time division multiplexer circuit derived from 
+[lab 2](https://www.github.com/coreyqh/hmc-e155-lab2)
+
+#### State transition diagrams/tables
+
+![figure 2: controller FSM State Transition Diagram](images/ctrlFSM_STD.png)
+![figure 3: controller FSM State Transition Table](images/ctrlFSM_STT.png)
+![figure 4: row driver FSM State Transition Diagram](images/rowFSM_STD.png)
+![figure 5: row driver FSM State Transition Table](images/rowFSM_STT.png)
+![figure 6: debouncing FSM State Transition Diagram](images/debouncer_STD.png)
+![figure 7: debouncing FSM State Transition Table](images/debouncer_STT.png)
+
+Figures 2-7 demonstrate the design of the three FSMs seen in the block diagram in figure 1
+
+#### Schematic
+![Figure 8: schematic of physical breadboard circuit](images/schematic.png)
+
+The schematic in Figure 8 demonstrates the phsyical hardware layout of the design, with the 4x4 keypad, 7-segment
+display, PNP transistors, pull down resistors, and current limiting resistors.
+
+#### Component Values
+For this lab we had 3 different resistor values to calculate. 
+
+First, we needed the current limiting resistors for the 7-segment LED arrays driven by the PNP resistors. For 
+safety, I aimed for ~3 mA. Red LEDs have a voltage drop of ~1.8V and there is a voltage drop of ~0.2V between the 
+collector and emitter of the PNP transister, per the [datasheet](https://hmc-e155.github.io/assets/doc/2N3906-D.pdf),
+so we get the following calculation
+
+$$
+R = \frac{3.3V - 0.2V - 1.8V}{3mA} = 433 \Omega
+$$
+
+Next, we have the resistor binding the base of the PNP transistor to the IO pin that powers each 7-segment 
+display. Since the upper voltage is 3.3V going into a silicon diode that connects to the base, the voltage at 
+the base is 0.7V lower or 2.6V. When the pin that is bridged to this terminal by a resistor is low, we wish to 
+limit the current into the pin, so we aim for a large resistor. If we aim for around 3 mA of current, then we 
+get the following equation for R:
+
+$$
+R = \frac{3.3V - 0.7V}{3mA} = 866 \Omega
+$$
+
+To be extra safe and make use of readily available components, I used 680 Ohms for the current limiting resistors
+and 1 kOhms for the resistors connected to the PNPs. 
+
+Finally, for the external pull down resistors I chose 680 Ohms since this value would safely be low enough to 
+prevent bringing the default pin voltage above the lower logic level. This likely could have been increased to save
+power, but since that wasn't a particular concern, I chose this lower value to be safe.
+
+### Results and Discussion
+
+#### Formal verification results
+
+![figure 9: Controller FSM Formal Verification Results](images/***formal.png)
+![figure 10: Row Driver FSM Formal Verification Results](images/***formal.png)
+![figure 11: Debouncer FSM Formal Verification Results](images/***formal.png)
+![figure 12: Keypad Encoder Formal Verification Results](images/***formal.png)
+
+These formal verification results demonstrate that each major submodule adheres to a set of application specific
+design properties for all time, proving that they work as expected.
+
+![figure 13: Top Module Simulation Waveforms](images/***wave.png)
+![figure 14: Top Module Simulation Output](images/***out.png)
+
+#### Hardware testing
+Every button was checker for proper behavior. When one button was pressed, no other buttons affected the display. 
+Additionally, I observed that the two segments did no flicker or bleed into one another, and were reletively bright. 
+
+### Conclusion
+
+I was able to design a matrix keypad driver circuit to read button presses from a real-world user. I brushed up on 
+my synchronous design skills and my ability to formally describe the intended behavior of a sequential design 
+without explicit test cases, as to be able to use formal verification. 
+
+I spent around 30 hours on this lab making sure my design meets all requirements
+
+### AI Prototype
+
+TODO
