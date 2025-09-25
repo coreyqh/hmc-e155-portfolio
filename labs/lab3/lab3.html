@@ -68,6 +68,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -152,7 +181,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#lab-3-keypad-scanner" id="toc-lab-3-keypad-scanner" class="nav-link active" data-scroll-target="#lab-3-keypad-scanner">Lab 3: Keypad Scanner</a></li>
+  <li><a href="#lab-3-keypad-scanner" id="toc-lab-3-keypad-scanner" class="nav-link active" data-scroll-target="#lab-3-keypad-scanner">Lab 3: Keypad Scanner</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#design-and-verification-methodology" id="toc-design-and-verification-methodology" class="nav-link" data-scroll-target="#design-and-verification-methodology">Design and Verification methodology</a></li>
+  <li><a href="#technical-documentation" id="toc-technical-documentation" class="nav-link" data-scroll-target="#technical-documentation">Technical Documentation</a></li>
+  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion">Results and Discussion</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#ai-prototype" id="toc-ai-prototype" class="nav-link" data-scroll-target="#ai-prototype">AI Prototype</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -164,8 +201,181 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="lab-3-keypad-scanner" class="level2">
 <h2 class="anchored" data-anchor-id="lab-3-keypad-scanner">Lab 3: Keypad Scanner</h2>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>This report outlines the design and verification process for a 4x4 keypad matrix with TDM 7-segment display outputs</p>
+</section>
+<section id="design-and-verification-methodology" class="level3">
+<h3 class="anchored" data-anchor-id="design-and-verification-methodology">Design and Verification methodology</h3>
+<p>To make block level verification as simple as possible, I factored the design into three FSMs that each handle a small set of tasks, with handshakes between them where necessary.</p>
+<p>I did block formal verification for this project using <a href="https://symbiyosys.readthedocs.io/en/latest/">SymbiYosys</a>. With this tool, I proved that a set of design assertions were impossible to break for each major design element. For system level verification, I produces a simple simulation testbench to demonstrate the glue logic between the formally verified blocks.</p>
+</section>
+<section id="technical-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="technical-documentation">Technical Documentation</h3>
+<p>The SystemVerilog source code for this lab can by found on my <a href="https://www.github.com/coreyqh/hmc-e155-lab3">github page</a></p>
+<section id="block-diagram" class="level4">
+<h4 class="anchored" data-anchor-id="block-diagram">Block Diagram</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/blockdiagram.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: Top level block diagram</figcaption>
+</figure>
+</div>
+<p>The block diagram in Figure 1 demonstrates the design structure with the three major FSMs, an encoder to convert row and column indecis into a hex value, and the time division multiplexer circuit derived from <a href="https://www.github.com/coreyqh/hmc-e155-lab2">lab 2</a></p>
+</section>
+<section id="state-transition-diagramstables" class="level4">
+<h4 class="anchored" data-anchor-id="state-transition-diagramstables">State transition diagrams/tables</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ctrlFSM_STD.png" class="img-fluid figure-img"></p>
+<figcaption>figure 2: controller FSM State Transition Diagram</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/ctrlFSM_STT.png" class="img-fluid figure-img"></p>
+<figcaption>figure 3: controller FSM State Transition Table</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/rowFSM_STD.png" class="img-fluid figure-img"></p>
+<figcaption>figure 4: row driver FSM State Transition Diagram</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/rowFSM_STT.png" class="img-fluid figure-img"></p>
+<figcaption>figure 5: row driver FSM State Transition Table</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/debouncer_STD.png" class="img-fluid figure-img"></p>
+<figcaption>figure 6: debouncing FSM State Transition Diagram</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/debouncer_STT.png" class="img-fluid figure-img"></p>
+<figcaption>figure 7: debouncing FSM State Transition Table</figcaption>
+</figure>
+</div>
+<p>Figures 2-7 demonstrate the design of the three FSMs seen in the block diagram in figure 1</p>
+</section>
+<section id="schematic" class="level4">
+<h4 class="anchored" data-anchor-id="schematic">Schematic</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/schematic.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 8: schematic of physical breadboard circuit</figcaption>
+</figure>
+</div>
+<p>The schematic in Figure 8 demonstrates the phsyical hardware layout of the design, with the 4x4 keypad, 7-segment display, PNP transistors, pull down resistors, and current limiting resistors.</p>
+</section>
+<section id="component-values" class="level4">
+<h4 class="anchored" data-anchor-id="component-values">Component Values</h4>
+<p>For this lab we had 3 different resistor values to calculate.</p>
+<p>First, we needed the current limiting resistors for the 7-segment LED arrays driven by the PNP resistors. For safety, I aimed for ~3 mA. Red LEDs have a voltage drop of ~1.8V and there is a voltage drop of ~0.2V between the collector and emitter of the PNP transister, per the <a href="https://hmc-e155.github.io/assets/doc/2N3906-D.pdf">datasheet</a>, so we get the following calculation</p>
+<p><span class="math display">\[
+R = \frac{3.3V - 0.2V - 1.8V}{3mA} = 433 \Omega
+\]</span></p>
+<p>Next, we have the resistor binding the base of the PNP transistor to the IO pin that powers each 7-segment display. Since the upper voltage is 3.3V going into a silicon diode that connects to the base, the voltage at the base is 0.7V lower or 2.6V. When the pin that is bridged to this terminal by a resistor is low, we wish to limit the current into the pin, so we aim for a large resistor. If we aim for around 3 mA of current, then we get the following equation for R:</p>
+<p><span class="math display">\[
+R = \frac{3.3V - 0.7V}{3mA} = 866 \Omega
+\]</span></p>
+<p>To be extra safe and make use of readily available components, I used 680 Ohms for the current limiting resistors and 1 kOhms for the resistors connected to the PNPs.</p>
+<p>Finally, for the external pull down resistors I chose 680 Ohms since this value would safely be low enough to prevent bringing the default pin voltage above the lower logic level. This likely could have been increased to save power, but since that wasn’t a particular concern, I chose this lower value to be safe.</p>
+</section>
+</section>
+<section id="results-and-discussion" class="level3">
+<h3 class="anchored" data-anchor-id="results-and-discussion">Results and Discussion</h3>
+<section id="formal-verification-results" class="level4">
+<h4 class="anchored" data-anchor-id="formal-verification-results">Formal verification results</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/e155_lab3_ctrlFSM_formal.png" class="img-fluid figure-img"></p>
+<figcaption>figure 9: Controller FSM Formal Verification Results</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/e155_lab3_rowFSM_formal.png" class="img-fluid figure-img"></p>
+<figcaption>figure 10: Row Driver FSM Formal Verification Results</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/e155_lab3_debouncer_formal.png" class="img-fluid figure-img"></p>
+<figcaption>figure 11: Debouncer FSM Formal Verification Results</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/e155_lab3_keypad_formal.png" class="img-fluid figure-img"></p>
+<figcaption>figure 12: Keypad Encoder Formal Verification Results</figcaption>
+</figure>
+</div>
+<p>These formal verification results demonstrate that each major submodule adheres to a set of application specific design properties for all time, proving that they work as expected.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/e155_lab3_top_wave.png" class="img-fluid figure-img"></p>
+<figcaption>figure 13: Top Module Simulation Waveforms</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/e155_lab3_top_sim.png" class="img-fluid figure-img"></p>
+<figcaption>figure 14: Top Module Simulation Output</figcaption>
+</figure>
+</div>
+</section>
+<section id="hardware-testing" class="level4">
+<h4 class="anchored" data-anchor-id="hardware-testing">Hardware testing</h4>
+<p>Every button was checker for proper behavior. When one button was pressed, no other buttons affected the display. Additionally, I observed that the two segments did no flicker or bleed into one another, and were reletively bright.</p>
+</section>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>I was able to design a matrix keypad driver circuit to read button presses from a real-world user. I brushed up on my synchronous design skills and my ability to formally describe the intended behavior of a sequential design without explicit test cases, as to be able to use formal verification.</p>
+<p>I spent around 35 hours on this lab making sure my design meets all requirements</p>
+</section>
+<section id="ai-prototype" class="level3">
+<h3 class="anchored" data-anchor-id="ai-prototype">AI Prototype</h3>
+<p>First, I gave Microsoft Copilot the following prompt:</p>
+<p>“Target device: Lattice iCE40 UP5K FPGA with internal high-speed oscillator (~20 MHz).</p>
+<p>Write synthesizable SystemVerilog to scan a 4x4 matrix keypad and display the last two hex keys pressed on a dual 7‑segment display. Implement:</p>
+<p>A clock divider that derives a scan clock on the order of 100–200 Hz from the internal oscillator. A keypad scanning controller that iterates one active‑low column at a time and samples active‑low rows, registering at most one key per press (debounce‑by‑design), ignoring additional presses while any key is held, and allowing a new registration only after release. A top level that updates two hex digits (older and most recent) when a new key is registered and drives a time‑multiplexed two‑digit 7‑segment display without visible flicker and with balanced brightness. Use idiomatic SystemVerilog (e.g., logic, always_ff, enumerated states for FSMs). Provide clean module boundaries and keep all state synchronous. Include brief comments explaining the design choices.”</p>
+<p>Initially, it did not synthesize due to the use of a <code>$clog2</code> function call for a cute one-liner priority encoder. After pointing this out, it make a custom SystemVerilog function to perform this functionality. After this change, it synthesized with the following netlist viewer result:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/AI_prot_A.png" class="img-fluid figure-img"></p>
+<figcaption>figure 15: First AI Prototype</figcaption>
+</figure>
+</div>
+<p>Next, I gave this LLM the following three prompts back-to-back:</p>
+<p>“Target device: Lattice iCE40 UP5K FPGA.</p>
+<p>Overall Goal: Write SystemVerilog to scan a 4x4 matrix keypad and display the last two hex keys pressed on a dual 7 segment display.</p>
+<p>Current Goal: Write a synthesizable SystemVerilog module that produces a one‑shot registration signal for the keypad system. Behavior:</p>
+<p>When a key press is first detected, capture the current key code and assert a single‑cycle “new key” pulse. While any key remains pressed, do not accept additional keys. Only after keys are released should a subsequent press be recognized. This should handle debouncing of the keys. Implement as a small synchronous FSM with enumerated states and glitch‑free outputs. Keep names and interfaces reasonable; do not assume any hidden modules beyond what you define here.”</p>
+<p>“Target device: Lattice iCE40 UP5K FPGA.</p>
+<p>Write a synthesizable SystemVerilog module that cycles through keypad columns (active‑low, one at a time) and samples rows (active‑low) to detect a single key at a time. Behavior:</p>
+<p>Iterate columns at a suitable scan rate derived from the divided clock and sample rows. When a key is detected, report a stable key code consistent with a standard 4x4 keypad layout and maintain it while the key remains pressed. Provide a boolean signal indicating whether any key is currently pressed. Use clean state encoding and synchronous logic; avoid combinational feedback and latches.”</p>
+<p>“Target device: Lattice iCE40 UP5K FPGA with internal oscillator as the root clock source.</p>
+<p>Write a top‑level SystemVerilog module that instantiates the scanner and one‑shot modules, shifts the last two keys (older ← most recent; most recent ← new), and drives a multiplexed two‑digit seven‑segment display. Requirements:</p>
+<p>Update the displayed digits only when a new key is registered. Ensure equal apparent brightness and no visible flicker. Keep all logic synthesizable and synchronous; use idiomatic SystemVerilog constructs. Provide any small clock‑enable or divider logic you need. You can also assume that a sevenSegment module exists that takes a 4 bit input and outputs the 7 segments.”</p>
+<p>Again, it did not synthesize initially since it was missing a keypad encoder module. Once this was pointed out and corrected, I got the following:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/AI_prot_B.png" class="img-fluid figure-img"></p>
+<figcaption>figure 16: First AI Prototype</figcaption>
+</figure>
+</div>
+<p>These designs are prett similar to mine, but were done in a small fraction of the time. I would be curious to see how well they did on the physical hardware, as there are many subtle hardware edge cases that I am not sure the AI model is considering in producing this code.</p>
+<p>Overall I am impressed with its performance, but I am also not shocked it missed synthesis issues and came up with nonstandard solutions.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
