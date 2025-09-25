@@ -159,7 +159,7 @@ Provide any small clock‑enable or divider logic you need. You can also assume 
 
 Again, it did not synthesize initially since it was missing a keypad encoder module. Once this was pointed out and corrected, I got the following:
 
-![figure 16: First AI Prototype](images/AI_prot_B.png)
+![figure 16: Second AI Prototype](images/AI_prot_B.png)
 
 These designs are prett similar to mine, but were done in a small fraction of the time. I would be curious to see how well they did on the
 physical hardware, as there are many subtle hardware edge cases that I am not sure the AI model is considering in producing this code. 
