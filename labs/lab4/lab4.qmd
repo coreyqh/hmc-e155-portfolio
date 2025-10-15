@@ -29,7 +29,7 @@ margin of error of the period of 80 MHz.
 
 ### Technical Documentation
 
-The SystemVerilog source code for this lab can by found on my [github page](https://www.github.com/coreyqh/hmc-e155-lab3)
+The SystemVerilog source code for this lab can by found on my [github page](https://www.github.com/coreyqh/hmc-e155-lab4)
 
 ### Schematic
 
@@ -131,4 +131,4 @@ Would you like help calculating the exact PSC and ARR values for a full range of
 To me this looks promising, and maybe could have helped me get a better start on the lab. However, I do not see how this would've helped me to configue the frequency of the PWM signal 
 for different tones. 
 
-I attemped to provide the reference mandual to a subsequent BING chat, and it simply hung without responding anything. 
+I attemped to provide the reference mandual to a subsequent BING chat, and it simply hung without responding anything.  

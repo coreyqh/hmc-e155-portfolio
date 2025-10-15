@@ -1,1 +1,69 @@
 ## Lab 5: Interrupts
+
+### Introduction
+This report outlines the design of interrupt based firmware to calculate the angular velocity of a DC motor using quadrature encoders 
+
+### Design methodology
+To ensure maximum accuracy accross all speeds, we use rising and falling edge interrupts for both quad encoders, and then use the values values of the two quad encoder signals to determine the 
+direction of rotation
+
+### Timing design and calculations
+To find the rotation speed of the motor, I have a variable that stores the number of IRQs that have occured which is incremented in the interrupt handlers for the A and B quad encoder signals. 
+To turn this count into a speed, I have a while loop in my main function that resets the counter and an internal timer, waits for the timer to surpass 1 sample period (200 ms), then does the following 
+calculation to find the number of revolutions per second
+
+$$
+M (Pulses) = \frac{N (Interrupts)}{4 (Interrupts/Pulse)} 
+$$
+
+$$
+RPS = \frac{\frac{M (Pulses)}{408 (Pulses/Rev)}}{\frac{P (ms)}{1000 (ms/s)}}
+$$
+
+Where N is the number of interrupts counted, M is the number of pulses, and P is the sample period in milliseconds.
+
+This methodology was implemented into a program with the following process flow diagram.
+![Figure 2: Process flow for main program and interrupt handlers](process_flow.jpg)
+
+### Timing Verification
+To verify the timing calculations above, I used an oscilliscope to measure the period of a quad encoder pulse, and the used the known value of 408 pulses/rev to find the true RPS. 
+
+![Figure 1: Oscilliscope trace of quad encoder with 5V motor input voltage](images/single_quad_trace.jpg)
+
+$$
+RPS = \frac{F (pulse/s)}{408 (pulse/rev)} = \frac{*** (pulse/s)}{408 (pulse/rev)} = ***
+$$
+
+While this trace was taken, the output terminal reported an RPS of ***, which is approximately equal to the true value calculated above.
+
+### Technical Documentation
+The SystemVerilog source code for this lab can by found on my [github page](https://www.github.com/coreyqh/hmc-e155-lab5)
+
+#### Schematic
+![Figure 3: Schematic of motor and quad encoder circuit](images/schematic.jpg)
+
+The schematic in figure 3 demonstrates the simple wiring for the quad encoder to the motherboard.
+
+### Results and discussion
+
+The design accurately displayed the angular speed of the motor and direction of rotation across a wide range of speeds. 
+
+This lab took roughly 9 hours.
+
+#### Comparison with polling
+
+To investigate the advantage of interrupt based timing calculations to polling, I repeated this assignment to use polling instead of interrupts, and in the main while loop toggled a pin to probe the
+frequency of this sampling. 
+
+![Figure 4: Oscilliscope trace of main polling loop](images/polling_trace.jpg)
+
+Since this pin toggles every time the main while loop cycles, one half period is the sample period for this polling based design. To ensure that polling does not miss any pin transition events, 
+this sample frequency must be at least twice that of the quad encoders (per Shannons Theorem).
+
+This means that the maximum pulses per second is 2 times the polling frequency, or ***. Finally, since there are 408 pulses per revolution, the maximum revolutions per second is 
+
+$$
+RPS \le \frac{*** (pulses/s)}{408 (pulses/rev)} = *** (rev/s)
+$$
+
+
