@@ -1,1 +1,34 @@
 ## Lab 6: The Internet of Things and Serial Peripheral Interface
+
+### Introduction
+This report outlines the design of an Internet of Things based temperature sensor and webpage
+
+### Design Methodology
+To record temperatures to display on the device's webpage, I used a SPI temperature sensor which is written to for configuration and read from to get the temperature in fixed point format.
+The DS1722 temperature sensor's data sheet can be found [here](https://hmc-e155.github.io/assets/doc/ds1722.pdf)
+
+For this, I had to write a custom SPI library in C to configure the SPI registers on the MCU and drive data out and read data back. 
+
+### Webpage Design
+I designed the webpage to have button inputs to configure the number of bits of resolution via an HTTP request in the same way that the starter code turns a LED on and off.
+
+![Figure 1: temperature sensor webpage](images/webpage.png)
+
+### Technical Documentation
+The C source code for this lab can by found on my [github page](https://www.github.com/coreyqh/hmc-e155-lab6)
+
+#### Schematic
+
+![Figure 2: Schematic of SPI temperature sensor circuit](images/schematic.png)
+
+#### SPI Verification
+To verify SPI transactions occured properl, I used a logic analyzer to show an SPI read and write between the MCU and temperature sensor
+
+![Figure 3: Logic analyzer trace demonstrating proper SPI behavior](images/logic_analyzer_trace.png)
+
+### Results and discussion
+My design successfully displayed the temperature data from a DS1722 temperature sensor on a webpage with button selected 8 to 12 bit resolution.
+
+This lab took me 10 hours
+
+### AI Prototype
