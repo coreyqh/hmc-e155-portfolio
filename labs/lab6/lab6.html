@@ -152,7 +152,15 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#lab-6-the-internet-of-things-and-serial-peripheral-interface" id="toc-lab-6-the-internet-of-things-and-serial-peripheral-interface" class="nav-link active" data-scroll-target="#lab-6-the-internet-of-things-and-serial-peripheral-interface">Lab 6: The Internet of Things and Serial Peripheral Interface</a></li>
+  <li><a href="#lab-6-the-internet-of-things-and-serial-peripheral-interface" id="toc-lab-6-the-internet-of-things-and-serial-peripheral-interface" class="nav-link active" data-scroll-target="#lab-6-the-internet-of-things-and-serial-peripheral-interface">Lab 6: The Internet of Things and Serial Peripheral Interface</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#design-methodology" id="toc-design-methodology" class="nav-link" data-scroll-target="#design-methodology">Design Methodology</a></li>
+  <li><a href="#webpage-design" id="toc-webpage-design" class="nav-link" data-scroll-target="#webpage-design">Webpage Design</a></li>
+  <li><a href="#technical-documentation" id="toc-technical-documentation" class="nav-link" data-scroll-target="#technical-documentation">Technical Documentation</a></li>
+  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion">Results and discussion</a></li>
+  <li><a href="#ai-prototype" id="toc-ai-prototype" class="nav-link" data-scroll-target="#ai-prototype">AI Prototype</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -164,8 +172,228 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="lab-6-the-internet-of-things-and-serial-peripheral-interface" class="level2">
 <h2 class="anchored" data-anchor-id="lab-6-the-internet-of-things-and-serial-peripheral-interface">Lab 6: The Internet of Things and Serial Peripheral Interface</h2>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>This report outlines the design of an Internet of Things based temperature sensor and webpage</p>
+</section>
+<section id="design-methodology" class="level3">
+<h3 class="anchored" data-anchor-id="design-methodology">Design Methodology</h3>
+<p>To record temperatures to display on the device’s webpage, I used a SPI temperature sensor which is written to for configuration and read from to get the temperature in fixed point format. The DS1722 temperature sensor’s data sheet can be found <a href="https://hmc-e155.github.io/assets/doc/ds1722.pdf">here</a></p>
+<p>For this, I had to write a custom SPI library in C to configure the SPI registers on the MCU and drive data out and read data back.</p>
+</section>
+<section id="webpage-design" class="level3">
+<h3 class="anchored" data-anchor-id="webpage-design">Webpage Design</h3>
+<p>I designed the webpage to have button inputs to configure the number of bits of resolution via an HTTP request in the same way that the starter code turns a LED on and off.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/webpage.jpeg" class="img-fluid figure-img"></p>
+<figcaption>Figure 1: temperature sensor webpage</figcaption>
+</figure>
+</div>
+</section>
+<section id="technical-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="technical-documentation">Technical Documentation</h3>
+<p>The C source code for this lab can by found on my <a href="https://www.github.com/coreyqh/hmc-e155-lab6">github page</a></p>
+<section id="schematic" class="level4">
+<h4 class="anchored" data-anchor-id="schematic">Schematic</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/schematic.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 2: Schematic of SPI temperature sensor circuit</figcaption>
+</figure>
+</div>
+</section>
+<section id="spi-verification" class="level4">
+<h4 class="anchored" data-anchor-id="spi-verification">SPI Verification</h4>
+<p>To verify SPI transactions occured properl, I used a logic analyzer to show an SPI read and write between the MCU and temperature sensor</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/logic_analyzer_trace.png" class="img-fluid figure-img"></p>
+<figcaption>Figure 3: Logic analyzer trace demonstrating proper SPI behavior</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="results-and-discussion" class="level3">
+<h3 class="anchored" data-anchor-id="results-and-discussion">Results and discussion</h3>
+<p>My design successfully displayed the temperature data from a DS1722 temperature sensor on a webpage with button selected 8 to 12 bit resolution.</p>
+<p>This lab took me 10 hours</p>
+</section>
+<section id="ai-prototype" class="level3">
+<h3 class="anchored" data-anchor-id="ai-prototype">AI Prototype</h3>
+<p>I fed google AI mode the two promps, but It refused to produce any HTML code, so I tried Microsoft Copilot and it produced the following code:</p>
+<p>HTML Webpage</p>
+<pre><code>char* AI_page = "\
+&lt;!DOCTYPE html&gt;\
+&lt;html lang=\"en\"&gt;\
+&lt;head&gt;\
+ &lt;meta charset=\"UTF-8\" /&gt;\
+ &lt;meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/&gt;\
+ &lt;title&gt;Temperature Sensor Dashboard&lt;/title&gt;\
+ &lt;style&gt;\
+   body {\
+     font-family: 'Segoe UI', sans-serif;\
+     background: #f4f7f9;\
+     color: #333;\
+     margin: 0;\
+     padding: 0;\
+   }\
+   header {\
+     background: #0078d4;\
+     color: white;\
+     padding: 1rem;\
+     text-align: center;\
+   }\
+   .container {\
+     max-width: 600px;\
+     margin: 2rem auto;\
+     padding: 2rem;\
+     background: white;\
+     border-radius: 8px;\
+     box-shadow: 0 2px 8px rgba(0,0,0,0.1);\
+   }\
+   .section {\
+     margin-bottom: 2rem;\
+   }\
+   .section h2 {\
+     margin-bottom: 1rem;\
+     font-size: 1.2rem;\
+     color: #0078d4;\
+   }\
+   .temperature-display {\
+     font-size: 2.5rem;\
+     font-weight: bold;\
+     text-align: center;\
+     margin: 1rem 0;\
+   }\
+   .controls {\
+     display: flex;\
+     justify-content: space-between;\
+     align-items: center;\
+   }\
+   .controls label {\
+     margin-right: 0.5rem;\
+   }\
+   .led-toggle {\
+     display: flex;\
+     align-items: center;\
+   }\
+   button {\
+     padding: 0.5rem 1rem;\
+     background: #0078d4;\
+     color: white;\
+     border: none;\
+     border-radius: 4px;\
+     cursor: pointer;\
+   }\
+   button:hover {\
+     background: #005fa3;\
+   }\
+   select {\
+     padding: 0.4rem;\
+   }\
+ &lt;/style&gt;\
+&lt;/head&gt;\
+&lt;body&gt;\
+ &lt;header&gt;\
+   &lt;h1&gt;Temperature Sensor Dashboard&lt;/h1&gt;\
+ &lt;/header&gt;\
+ &lt;div class=\"container\"&gt;\
+   &lt;div class=\"section\"&gt;\
+     &lt;h2&gt;Current Temperature&lt;/h2&gt;\
+     &lt;div class=\"temperature-display\" id=\"tempValue\"&gt;-- °C&lt;/div&gt;\
+   &lt;/div&gt;\
+   &lt;div class=\"section controls\"&gt;\
+     &lt;div class=\"led-toggle\"&gt;\
+       &lt;label for=\"ledSwitch\"&gt;LED:&lt;/label&gt;\
+       &lt;button id=\"ledSwitch\"&gt;Toggle&lt;/button&gt;\
+     &lt;/div&gt;\
+     &lt;div&gt;\
+       &lt;label for=\"precisionSelect\"&gt;Precision:&lt;/label&gt;\
+       &lt;select id=\"precisionSelect\"&gt;\
+         &lt;option value=\"0\"&gt;0 decimal&lt;/option&gt;\
+         &lt;option value=\"1\" selected&gt;1 decimal&lt;/option&gt;\
+         &lt;option value=\"2\"&gt;2 decimals&lt;/option&gt;\
+       &lt;/select&gt;\
+     &lt;/div&gt;\
+   &lt;/div&gt;\
+ &lt;/div&gt;\
+ &lt;script&gt;\
+   let ledState = false;\
+   let precision = 1;\
+   function fetchTemperature() {\
+     // Simulate fetching temperature from a sensor\
+     const rawTemp = 22.3456 + Math.random(); // Simulated temperature\
+     const temp = rawTemp.toFixed(precision);\
+     document.getElementById('tempValue').textContent = `${temp} °C`;\
+   }\
+   document.getElementById('ledSwitch').addEventListener('click', () =&gt; {\
+     ledState = !ledState;\
+     // Replace with actual API call to toggle LED\
+     alert(`LED turned ${ledState ? 'ON' : 'OFF'}`);\
+   });\
+   document.getElementById('precisionSelect').addEventListener('change', (e) =&gt; {\
+     precision = parseInt(e.target.value);\
+     fetchTemperature();\
+   });\
+   // Initial fetch and update every 5 seconds\
+   fetchTemperature();\
+   setInterval(fetchTemperature, 5000);\
+ &lt;/script&gt;\
+&lt;/body&gt;\
+&lt;/html&gt;";</code></pre>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/AI_webpage.jpeg" class="img-fluid figure-img"></p>
+<figcaption>Figure 4: AI created webpage</figcaption>
+</figure>
+</div>
+<p>SPI code</p>
+<pre><code>#include "stm32l4xx.h"  // CMSIS header for STM32L432KC
+
+#define DS1722_CS_PORT GPIOA
+#define DS1722_CS_PIN  GPIO_PIN_4
+
+#define DS1722_READ_TEMP_CMD 0x01  // Read temperature command
+
+// Helper macros to control CS pin
+#define DS1722_CS_LOW()  (DS1722_CS_PORT-&gt;BSRR = (uint32_t)DS1722_CS_PIN &lt;&lt; 16)
+#define DS1722_CS_HIGH() (DS1722_CS_PORT-&gt;BSRR = DS1722_CS_PIN)
+
+float DS1722_ReadTemperature(SPI_TypeDef *SPIx) {
+    uint8_t tx_buf[3] = { DS1722_READ_TEMP_CMD, 0x00, 0x00 };
+    uint8_t rx_buf[3] = { 0 };
+
+    // Pull CS low to start transaction
+    DS1722_CS_LOW();
+
+    // Send command and receive 2 bytes
+    for (int i = 0; i &lt; 3; i++) {
+        // Wait until TXE is set
+        while (!(SPIx-&gt;SR &amp; SPI_SR_TXE));
+        *((__IO uint8_t *)&amp;SPIx-&gt;DR) = tx_buf[i];
+
+        // Wait until RXNE is set
+        while (!(SPIx-&gt;SR &amp; SPI_SR_RXNE));
+        rx_buf[i] = *((__IO uint8_t *)&amp;SPIx-&gt;DR);
+    }
+
+    // Pull CS high to end transaction
+    DS1722_CS_HIGH();
+
+    // Combine MSB and LSB (12-bit resolution)
+    int16_t raw_temp = ((int16_t)rx_buf[1] &lt;&lt; 8) | rx_buf[2];
+    float temperature = raw_temp / 256.0f;
+
+    return temperature;
+}
+</code></pre>
+<p>The HTML code seemed to make a nice webpage. However I did not take the time to integrate it it with the sensing code.</p>
+<p>For the SPI C code, it seemed to write reasonable code but I did not get it to work on my board. It appears to have used a few undefined macros and dubious CMSIS function that assume some other files exist with a certain structure.</p>
+<p>I think this could have been a good starting point for my code, but having already written my library it seems incompatible.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
